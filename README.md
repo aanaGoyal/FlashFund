@@ -46,7 +46,7 @@ To get FlashFund up and running on your local machine:
 
 1.  **Clone the Repository:**
     ```bash
-    git clone [https://github.com/your-username/FlashFund.git](https://github.com/your-username/FlashFund.git) # Replace 'your-username' with your actual GitHub username
+    git clone [https://github.com/aanaGoyal/FlashFund.git](https://github.com/aanaGoyal/FlashFund.git) 
     cd FlashFund
     ```
 2.  **Create a Virtual Environment:**
