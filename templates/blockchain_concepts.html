@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FlashFund: Blockchain Concepts</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Inter font from Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 50%, #bfdbfe 100%);
+            color: #334155;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 40px 16px;
+        }
+
+        /* Scrollbar Styling */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #e0e7ff;
+            border-radius: 10px;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #6366f1;
+            border-radius: 10px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #4f46e5;
+        }
+
+        /* MetaMask button specific styles */
+        .metamask-btn {
+            background-color: #f6851b; /* MetaMask orange */
+            color: white;
+            padding: 10px 20px;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background-color 0.2s ease, transform 0.2s ease;
+            margin-top: 20px; /* Space below ID */
+            display: inline-flex;
+            align-items: center;
+            gap: 15px;
+            box-shadow: 0 3px 6px rgba(0,0,0,0.2);
+        }
+        .metamask-btn:hover {
+            background-color: #e0740a; /* Darker orange */
+            transform: translateY(-1px);
+        }
+        .metamask-btn:disabled {
+            background-color: #cccccc;
+            cursor: not-allowed;
+            box-shadow: none;
+            transform: none;
+        }
+    </style>
+</head>
+<body class="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 flex flex-col items-center py-10 px-4">
+
+    <header class="text-center mb-12 w-full max-w-4xl">
+        <h1 class="text-5xl font-extrabold text-blue-700">FlashFund</h1>
+        <p class="text-lg mt-1 text-gray-600">Simple & Transparent Donations</p>
+        <div class="mt-4 inline-block bg-blue-100 px-4 py-2 rounded shadow text-sm">
+            <strong>Your ID:</strong>
+            <span id="userIdDisplay" class="font-mono text-blue-800">{{ user_id }}</span> 
+        </div>
+        <button id="connectMetaMaskBtn" class="metamask-btn ml-4">
+            🦊 Connect MetaMask
+        </button>
+        <!-- Navigation for multiple pages -->
+        <nav class="mt-8">
+            <ul class="flex justify-center space-x-6">
+                <li><a href="{{ url_for('home') }}" class="text-gray-700 font-semibold text-lg hover:text-blue-700 transition-colors duration-200">Home</a></li>
+                <li><a href="{{ url_for('blockchain_concepts') }}" class="text-blue-700 font-semibold text-lg hover:text-blue-900 transition-colors duration-200 border-b-2 border-blue-700 pb-1">Blockchain Concepts</a></li>
+                <li><a href="{{ url_for('validate') }}" class="text-gray-700 font-semibold text-lg hover:text-blue-700 transition-colors duration-200">Validator Panel</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <main class="w-full max-w-4xl space-y-8">
+        <!-- Blockchain Concepts Section -->
+        <div class="p-8 bg-white rounded-2xl shadow-xl space-y-7 border border-gray-200">
+            <h2 class="text-3xl font-bold text-gray-800 mb-6 text-center">Understanding Blockchain Concepts</h2>
+            <p class="text-gray-700 text-lg leading-relaxed">
+                While FlashFund uses a centralized database (Firestore) for simplicity, it aims to demonstrate the transparency and traceability that blockchain technology offers. Let's explore some key blockchain terms:
+            </p>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div class="bg-blue-50 p-5 rounded-xl border border-blue-200 shadow-sm transition-transform duration-200 hover:scale-[1.01]">
+                    <h3 class="text-xl font-semibold text-blue-800 mb-2 flex items-center">
+                        <span class="text-2xl mr-2">🔗</span> Transaction Process
+                    </h3>
+                    <p class="text-gray-700 leading-relaxed">
+                        In a blockchain, a <strong class="text-blue-700">transaction</strong> is an action, like sending money or data. When you make a "donation" in FlashFund, it's like creating a transaction. On a real blockchain, this transaction is broadcast to the network, verified by participants, and then added to a block.
+                    </p>
+                </div>
+
+                <div class="bg-blue-50 p-5 rounded-xl border border-blue-200 shadow-sm transition-transform duration-200 hover:scale-[1.01]">
+                    <h3 class="text-xl font-semibold text-blue-800 mb-2 flex items-center">
+                        <span class="text-2xl mr-2">📦</span> Blocks
+                    </h3>
+                    <p class="text-gray-700 leading-relaxed">
+                        Think of <strong class="text-blue-700">blocks</strong> as pages in a digital ledger. Each block contains a list of verified transactions. Once a block is filled and verified, it's added to the "chain" of previous blocks, creating a continuous and unchangeable record. This is why it's called a "blockchain"!
+                    </p>
+                </div>
+
+                <div class="bg-blue-50 p-5 rounded-xl border border-blue-200 shadow-sm transition-transform duration-200 hover:scale-[1.01]">
+                    <h3 class="text-xl font-semibold text-blue-800 mb-2 flex items-center">
+                        <span class="text-2xl mr-2">🌐</span> Ethereum
+                    </h3>
+                    <p class="text-gray-700 leading-relaxed">
+                        <strong class="text-blue-700">Ethereum</strong> is one of the most popular blockchain platforms. It's not just for cryptocurrency; it's a platform that allows developers to build decentralized applications (dApps) and smart contracts. Many transparent donation systems could be built on platforms like Ethereum.
+                    </p>
+                </div>
+
+                <div class="bg-blue-50 p-5 rounded-xl border border-blue-200 shadow-sm transition-transform duration-200 hover:scale-[1.01]">
+                    <h3 class="text-xl font-semibold text-blue-800 mb-2 flex items-center">
+                        <span class="text-2xl mr-2">Ξ</span> Ether (ETH)
+                    </h3>
+                    <p class="text-gray-700 leading-relaxed">
+                        <strong class="text-blue-700">Ether (ETH)</strong> is the native cryptocurrency of the Ethereum blockchain. It's used to pay for transaction fees (called "gas") and can also be used as a form of digital money, much like our simulated "amount" in FlashFund.
+                    </p>
+                </div>
+
+                <div class="bg-blue-50 p-5 rounded-xl border border-blue-200 shadow-sm transition-transform duration-200 hover:scale-[1.01]">
+                    <h3 class="text-xl font-semibold text-blue-800 mb-2 flex items-center">
+                        <span class="text-2xl mr-2">👤</span> Accounts
+                    </h3>
+                    <p class="text-gray-700 leading-relaxed">
+                        On a blockchain like Ethereum, users have <strong class="text-blue-700">accounts</strong> (often called wallets) which are like your digital identity. Each account has a unique public address, similar to the "User ID" in FlashFund, which allows others to send you funds or interact with your dApps.
+                    </p>
+                </div>
+
+                <div class="bg-blue-50 p-5 rounded-xl border border-blue-200 shadow-sm transition-transform duration-200 hover:scale-[1.01]">
+                    <h3 class="text-xl font-semibold text-blue-800 mb-2 flex items-center">
+                        <span class="text-2xl mr-2">✨</span> Minting Ether
+                    </h3>
+                    <p class="text-700 leading-relaxed">
+                        <strong class="text-blue-700">Minting Ether</strong> refers to the process by which new Ether is created and enters circulation. Historically, this happened through "mining" (solving complex puzzles), but with Ethereum's shift to Proof of Stake, new Ether is now primarily "minted" as a reward for "stakers" who help secure the network.
+                    </p>
+                </div>
+
+                <div class="bg-blue-50 p-5 rounded-xl border border-blue-200 shadow-sm transition-transform duration-200 hover:scale-[1.01]">
+                    <h3 class="text-xl font-semibold text-blue-800 mb-2 flex items-center">
+                        <span class="text-2xl mr-2">🔥</span> Burning Ether
+                    </h3>
+                    <p class="text-gray-700 leading-relaxed">
+                        <strong class="text-blue-700">Burning Ether</strong> is the opposite of minting; it's the process of permanently removing Ether from circulation. This is often done to reduce the total supply of Ether, which can affect its value, or as part of transaction fee mechanisms.
+                    </p>
+                </div>
+
+                <div class="bg-blue-50 p-5 rounded-xl border border-blue-200 shadow-sm transition-transform duration-200 hover:scale-[1.01]">
+                    <h3 class="text-xl font-semibold text-blue-800 mb-2 flex items-center">
+                        <span class="text-2xl mr-2">🤝</span> Proof of Stake (PoS)
+                    </h3>
+                    <p class="text-gray-700 leading-relaxed">
+                        <strong class="text-blue-700">Proof of Stake (PoS)</strong> is a method used by some blockchains (like Ethereum now) to verify transactions and create new blocks. Instead of "miners" competing with powerful computers (as in Proof of Work), "validators" are chosen to create new blocks based on how much cryptocurrency they "stake" (lock up as collateral). This method is generally more energy-efficient and scalable.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <footer class="mt-10 text-center text-gray-500 text-sm">
+        <p>&copy; 2025 FlashFund. All rights reserved. (Simulated Donations)</p>
+    </footer>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const connectMetaMaskBtn = document.getElementById('connectMetaMaskBtn');
+            const userIdDisplay = document.getElementById('userIdDisplay');
+            
+            // Function to update UI with user ID
+            function updateUserId(id) {
+                userIdDisplay.textContent = id;
+                // Update all hidden MetaMaskUserId inputs in forms
+                document.querySelectorAll('input[name="metaMaskUserId"]').forEach(input => {
+                    input.value = id;
+                });
+            }
+
+            // Initial display of Flask-generated user_id
+            // The `user_id` from Flask is already in `userIdDisplay.textContent` on page load.
+            updateUserId(userIdDisplay.textContent); // Ensure all hidden inputs are set initially
+
+
+            // Initial check for MetaMask presence and update button state
+            if (typeof window.ethereum === 'undefined') {
+                console.log('MetaMask (window.ethereum) is not detected.');
+                connectMetaMaskBtn.textContent = '🦊 Install MetaMask';
+                connectMetaMaskBtn.disabled = false; 
+                connectMetaMaskBtn.onclick = () => {
+                    console.log('Opening MetaMask download page.');
+                    window.open('https://metamask.io/download/', '_blank'); // Open download page
+                };
+            } else {
+                console.log('MetaMask (window.ethereum) detected.');
+                // Add an event listener for accountsChanged to keep UI updated if user changes accounts
+                window.ethereum.on('accountsChanged', (accounts) => {
+                    console.log('MetaMask accounts changed:', accounts);
+                    if (accounts.length > 0) {
+                        updateUserId(accounts[0]);
+                        connectMetaMaskBtn.textContent = '🦊 MetaMask Connected';
+                        connectMetaMaskBtn.disabled = true;
+                    } else {
+                        // User disconnected all accounts from MetaMask
+                        // Revert to the Flask-generated UUID and re-enable connect button
+                        const flaskGeneratedId = '{{ user_id }}'; // Get the original Flask ID
+                        updateUserId(flaskGeneratedId);
+                        connectMetaMaskBtn.textContent = '🦊 Connect MetaMask';
+                        connectMetaMaskBtn.disabled = false;
+                        console.log('MetaMask disconnected. Your ID has reverted to a temporary ID.');
+                    }
+                });
+
+                // Add an event listener for chainChanged to handle network changes
+                window.ethereum.on('chainChanged', (chainId) => {
+                    console.log('MetaMask network changed to:', chainId);
+                    // You might want to reload the page or show a message to the user
+                    // if your dApp is sensitive to network changes.
+                    // For this simple demo, we'll just log it.
+                });
+            }
+
+            // MetaMask connection logic
+            connectMetaMaskBtn.addEventListener('click', async () => {
+                console.log('Connect MetaMask button clicked.');
+                if (typeof window.ethereum !== 'undefined') { 
+                    try {
+                        const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
+                        if (accounts.length > 0) {
+                            const account = accounts[0];
+                            updateUserId(account);
+                            connectMetaMaskBtn.textContent = '🦊 MetaMask Connected';
+                            connectMetaMaskBtn.disabled = true;
+                            console.log(`MetaMask connected! Your ID is now: ${account}`);
+                        } else {
+                            console.log('No MetaMask accounts found or selected.');
+                        }
+                    } catch (error) {
+                        console.error('MetaMask connection error:', error);
+                        if (error.code === 4001) { // User rejected request
+                            console.log('MetaMask connection rejected by user.');
+                        } else {
+                            console.error(`Could not connect to MetaMask: ${error.message || 'Unknown error'}.`);
+                        }
+                    }
+                } else {
+                    // This case should be handled by the initial check and button text change
+                    console.log('MetaMask is not installed. The button should prompt for installation.');
+                }
+            });
+        });
+    </script>
+</body>
+</html>

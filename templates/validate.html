@@ -1,0 +1,551 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Validate Donations | FlashFund</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@500;700&display=swap" rel="stylesheet">
+    <style>
+        /* Base Styles */
+        body {
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 50%, #bfdbfe 100%);
+            color: #334155;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 40px 16px;
+        }
+
+        /* Scrollbar Styling */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #e0e7ff;
+            border-radius: 10px;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #6366f1;
+            border-radius: 10px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #4f46e5;
+        }
+
+        /* MetaMask button specific styles */
+        .metamask-btn {
+            background-color: #f6851b; /* MetaMask orange */
+            color: white;
+            padding: 10px 20px;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background-color 0.2s ease, transform 0.2s ease;
+            margin-top: 20px; /* Space below ID */
+            display: inline-flex;
+            align-items: center;
+            gap: 15px;
+            box-shadow: 0 3px 6px rgba(0,0,0,0.2);
+        }
+        .metamask-btn:hover {
+            background-color: #e0740a; /* Darker orange */
+            transform: translateY(-1px);
+        }
+        .metamask-btn:disabled {
+            background-color: #cccccc;
+            cursor: not-allowed;
+            box-shadow: none;
+            transform: none;
+        }
+
+        /* Main Content Area */
+        .main-container {
+            max-width: 960px;
+            margin-left: auto;
+            margin-right: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 32px;
+        }
+
+        /* Message Box */
+        .alert-message {
+            padding: 16px 20px;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            border-width: 1px;
+            font-size: 1rem;
+            font-weight: 500;
+        }
+        .alert-success {
+            background-color: #dcfce7;
+            border-color: #22c55e;
+            color: #16a34a;
+        }
+        .alert-error {
+            background-color: #fee2e2;
+            border-color: #ef4444;
+            color: #dc2626;
+        }
+        .alert-info {
+            background-color: #fef9c3;
+            border-color: #eab308;
+            color: #a16207;
+        }
+
+        /* Section Cards */
+        .section-card {
+            background-color: #ffffff;
+            padding: 40px;
+            border-radius: 16px;
+            box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1), 0 4px 6px -2px rgba(0,0,0,0.05);
+            border: 1px solid #e2e8f0;
+        }
+        .section-heading {
+            font-size: 2.25rem;
+            font-weight: 800;
+            color: #1e293b;
+            margin-bottom: 32px;
+            text-align: center;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+        }
+
+        /* Form Elements */
+        .form-group {
+            margin-bottom: 20px;
+        }
+        .form-label {
+            display: block;
+            margin-bottom: 8px;
+            font-size: 1.125rem;
+            font-weight: 500;
+            color: #475569;
+        }
+        .form-input,
+        .form-textarea {
+            width: 100%;
+            padding: 14px 16px;
+            border: 1px solid #cbd5e0;
+            border-radius: 10px;
+            box-shadow: inset 0 1px 2px rgba(0,0,0,0.05);
+            font-size: 1.125rem;
+            transition: border-color 0.2s ease, box-shadow 0.2s ease;
+        }
+        .form-input:focus,
+        .form-textarea:focus {
+            outline: none;
+            border-color: #6366f1;
+            box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.3);
+        }
+        .form-textarea {
+            resize: vertical;
+            min-height: 120px;
+        }
+        .submit-btn {
+            width: 100%;
+            padding: 16px 24px;
+            background: linear-gradient(to right, #4f46e5, #7c3aed);
+            color: white;
+            border: none;
+            border-radius: 12px;
+            font-size: 1.25rem;
+            font-weight: 700;
+            cursor: pointer;
+            box-shadow: 0 5px 10px rgba(0,0,0,0.2);
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+        .submit-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 15px rgba(0,0,0,0.3);
+        }
+
+        /* Donation List Items */
+        .donation-list {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+            list-style: none;
+            padding: 0;
+        }
+        .donation-item-base {
+            padding: 20px;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            border: 1px solid;
+            transition: transform 0.2s ease;
+        }
+        .donation-item-base:hover {
+            transform: translateY(-2px);
+        }
+        .donation-item-pending {
+            background-color: #fffbeb; /* Light yellow for pending */
+            border-color: #fcd34d; /* Yellow border */
+        }
+        .donation-info-line {
+            font-size: 0.9375rem;
+            color: #475569;
+            margin-bottom: 4px;
+        }
+        .donation-label {
+            font-weight: 600;
+            color: #2563eb;
+        }
+        .donation-id-value {
+            font-family: 'monospace', monospace;
+            color: #334155;
+            word-break: break-all;
+        }
+        .donation-amount {
+            font-size: 1.5rem;
+            font-weight: 800;
+            color: #1e293b;
+            margin-bottom: 8px;
+        }
+        .amount-pending {
+            color: #d97706; /* Orange for pending */
+        }
+        .donation-purpose-text {
+            color: #475569;
+            font-size: 1rem;
+            margin-bottom: 8px;
+        }
+        .donation-timestamp-text {
+            font-size: 0.75rem;
+            color: #64748b;
+            margin-top: 8px;
+        }
+        .validator-actions-container {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            margin-top: 20px;
+            padding-top: 16px;
+            border-top: 1px dashed #e2e8f0;
+        }
+        .validator-note-input {
+            width: 100%;
+            padding: 10px 12px;
+            border: 1px solid #cbd5e0;
+            border-radius: 6px;
+            font-size: 0.9rem;
+            resize: vertical;
+            min-height: 60px;
+        }
+        .validator-buttons {
+            display: flex;
+            gap: 12px;
+            justify-content: flex-end;
+        }
+        .validator-btn {
+            padding: 10px 20px;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background-color 0.2s ease, transform 0.2s ease;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .validator-btn-approve {
+            background-color: #22c55e; /* Green */
+            color: white;
+        }
+        .validator-btn-approve:hover {
+            background-color: #16a34a;
+            transform: translateY(-1px);
+        }
+        .validator-btn-reject {
+            background-color: #ef4444; /* Red */
+            color: white;
+        }
+        .validator-btn-reject:hover {
+            background-color: #dc2626;
+            transform: translateY(-1px);
+        }
+        .admin-id-input-group {
+            margin-bottom: 20px;
+        }
+        .admin-id-input {
+            width: 100%;
+            padding: 12px 15px;
+            border: 1px solid #cbd5e0;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-family: 'monospace', monospace;
+            box-shadow: inset 0 1px 2px rgba(0,0,0,0.05);
+        }
+        .verify-admin-btn {
+            background-color: #6366f1; /* Indigo */
+            color: white;
+            padding: 12px 20px;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background-color 0.2s ease, transform 0.2s ease;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            width: 100%;
+            margin-top: 10px;
+        }
+        .verify-admin-btn:hover {
+            background-color: #4f46e5;
+            transform: translateY(-1px);
+        }
+        .access-denied-message {
+            background-color: #fef2f2;
+            border: 1px solid #fca5a5;
+            color: #dc2626;
+            padding: 16px;
+            border-radius: 10px;
+            text-align: center;
+            font-weight: 500;
+            margin-top: 20px;
+        }
+
+        /* Footer */
+        .app-footer {
+            text-align: center;
+            font-size: 0.875rem;
+            color: #64748b;
+            margin-top: 48px;
+        }
+
+        /* Responsive Adjustments */
+        @media (max-width: 768px) {
+            .app-title {
+                font-size: 3.5rem;
+            }
+            .app-subtitle {
+                font-size: 1.375rem;
+            }
+            .nav-list {
+                flex-direction: column;
+                gap: 12px;
+            }
+            .nav-link {
+                font-size: 1rem;
+            }
+            .section-card {
+                padding: 24px;
+            }
+            .section-heading {
+                font-size: 1.75rem;
+                flex-direction: column;
+                gap: 8px;
+            }
+            .form-label {
+                font-size: 1rem;
+            }
+            .form-input, .form-textarea {
+                font-size: 1rem;
+                padding: 12px;
+            }
+            .submit-btn {
+                font-size: 1.125rem;
+                padding: 14px;
+            }
+            .donation-amount {
+                font-size: 1.25rem;
+            }
+            .donor-notifications-heading {
+                font-size: 1.5rem;
+                flex-direction: column;
+                gap: 8px;
+            }
+            .validator-buttons {
+                flex-direction: column;
+            }
+            .validator-btn {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <header class="text-center mb-10">
+        <h1 class="text-5xl font-extrabold text-blue-700">FlashFund</h1>
+        <p class="text-lg mt-1 text-gray-600">Review and approve donations before they go live.</p>
+        <div class="mt-4 inline-block bg-blue-100 px-4 py-2 rounded shadow text-sm">
+            <strong>Your ID:</strong> <span id="userIdDisplay" class="font-mono text-blue-800">{{ user_id }}</span>
+        </div>
+        <button id="connectMetaMaskBtn" class="metamask-btn ml-4">
+            🦊 Connect MetaMask
+        </button>
+        <nav class="mt-6">
+            <ul class="flex justify-center gap-6 text-blue-700 font-semibold text-base">
+                <li><a href="{{ url_for('home') }}" class="hover:text-blue-900 transition">Home</a></li>
+                <li><a href="{{ url_for('blockchain_concepts') }}" class="hover:text-blue-900 transition">Blockchain Concepts</a></li>
+                <li><a href="{{ url_for('validate') }}" class="text-blue-700 font-semibold text-base hover:text-blue-900 transition border-b-2 border-blue-700 pb-1">Validator Panel</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <main class="main-container">
+
+        <!-- General Message -->
+        {% if message %}
+        <div class="alert-message {% if message_type == 'success' %}alert-success{% elif message_type == 'error' %}alert-error{% else %}alert-info{% endif %}" role="alert">
+            {{ message }}
+        </div>
+        {% endif %}
+
+        <!-- Admin ID Input Form -->
+        <form method="POST" action="{{ url_for('validate') }}" class="section-card space-y-4">
+            <input type="hidden" id="metaMaskUserIdAdmin" name="metaMaskUserId" value=""> {# Hidden input for MetaMask ID in admin form #}
+            <h2 class="section-heading">
+                🔑 Admin Verification
+            </h2>
+            <div class="admin-id-input-group">
+                <label for="admin_id_input" class="form-label">Enter Admin ID to Enable Validation Actions:</label>
+                <input
+                    type="text"
+                    id="admin_id_input"
+                    name="admin_id_input"
+                    value="{{ last_admin_id if last_admin_id else '' }}"
+                    class="admin-id-input"
+                    placeholder="Paste Admin UUID here"
+                    required
+                >
+            </div>
+            <button type="submit" name="action" value="verify_admin" class="verify-admin-btn">Verify Admin ID</button>
+        </form>
+
+        {% if pending_donations %}
+            {% for pd in pending_donations %}
+            <form method="POST" class="section-card space-y-4">
+                <input type="hidden" name="donation_id" value="{{ pd.id }}">
+                <input type="hidden" name="admin_id_input" value="{{ last_admin_id if last_admin_id else '' }}"> {# Pass the last entered admin ID #}
+                <input type="hidden" id="metaMaskUserId_{{ pd.id }}" name="metaMaskUserId" value=""> {# Value is initially empty for each donation form #}
+
+
+                <h3 class="section-heading" style="font-size: 1.5rem; margin-bottom: 15px;">Pending Donation #{{ pd.id }}</h3>
+                <div class="donation-item-base donation-item-pending">
+                    <p class="donation-info-line"><span class="donation-label">Donor ID:</span> <span class="donation-id-value">{{ pd.donorId }}</span></p>
+                    <p class="donation-amount">Amount: <span class="amount-pending">₹{{ "%.2f" | format(pd.amount) }}</span></p>
+                    <p class="donation-purpose-text"><span class="donation-label">Purpose:</span> {{ pd.description }}</p>
+                    <p class="donation-timestamp-text">Submitted: {{ pd.timestamp }}</p>
+                </div>
+
+                {# Conditional rendering for validator actions #}
+                {% if is_admin_verified %}
+                    <div class="validator-actions-container">
+                        <div>
+                            <label for="note-{{ pd.id }}" class="form-label">Validator Message (optional)</label>
+                            <textarea name="note" id="note-{{ pd.id }}" rows="2" class="validator-note-input" placeholder="Add a note for approval or rejection"></textarea>
+                        </div>
+
+                        <div class="validator-buttons">
+                            <button type="submit" name="action" value="reject" class="validator-btn validator-btn-reject">Reject</button>
+                            <button type="submit" name="action" value="approve" class="validator-btn validator-btn-approve">Approve</button>
+                        </div>
+                    </div>
+                {% else %}
+                    <div class="access-denied-message">
+                        Enter correct Admin ID above to enable approval/rejection actions.
+                    </div>
+                {% endif %}
+            </form>
+            {% endfor %}
+        {% else %}
+            <div class="section-card">
+                <p class="text-gray-600 text-center text-lg">No pending donations to review.</p>
+            </div>
+        {% endif %}
+    </main>
+
+    <footer class="app-footer">
+        &copy; 2025 FlashFund Validator System | Built with ❤️ for project learning
+    </footer>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const connectMetaMaskBtn = document.getElementById('connectMetaMaskBtn');
+            const userIdDisplay = document.getElementById('userIdDisplay');
+            
+            // Function to update UI with user ID
+            function updateUserId(id) {
+                userIdDisplay.textContent = id;
+                // Update all hidden MetaMaskUserId inputs in forms
+                document.querySelectorAll('input[name="metaMaskUserId"]').forEach(input => {
+                    input.value = id;
+                });
+            }
+
+            // Initial display of Flask-generated user_id
+            // The `user_id` from Flask is already in `userIdDisplay.textContent` on page load.
+            updateUserId(userIdDisplay.textContent); // Ensure all hidden inputs are set initially
+
+
+            // Initial check for MetaMask presence and update button state
+            if (typeof window.ethereum === 'undefined') {
+                console.log('MetaMask (window.ethereum) is not detected.');
+                connectMetaMaskBtn.textContent = '🦊 Install MetaMask';
+                connectMetaMaskBtn.disabled = false; 
+                connectMetaMaskBtn.onclick = () => {
+                    console.log('Opening MetaMask download page.');
+                    window.open('https://metamask.io/download/', '_blank'); // Open download page
+                };
+            } else {
+                console.log('MetaMask (window.ethereum) detected.');
+                // Add an event listener for accountsChanged to keep UI updated if user changes accounts
+                window.ethereum.on('accountsChanged', (accounts) => {
+                    console.log('MetaMask accounts changed:', accounts);
+                    if (accounts.length > 0) {
+                        updateUserId(accounts[0]);
+                        connectMetaMaskBtn.textContent = '🦊 MetaMask Connected';
+                        connectMetaMaskBtn.disabled = true;
+                    } else {
+                        // User disconnected all accounts from MetaMask
+                        // Revert to the Flask-generated UUID and re-enable connect button
+                        const flaskGeneratedId = '{{ user_id }}'; // Get the original Flask ID
+                        updateUserId(flaskGeneratedId);
+                        connectMetaMaskBtn.textContent = '🦊 Connect MetaMask';
+                        connectMetaMaskBtn.disabled = false;
+                        console.log('MetaMask disconnected. Your ID has reverted to a temporary ID.');
+                    }
+                });
+
+                // Add an event listener for chainChanged to handle network changes
+                window.ethereum.on('chainChanged', (chainId) => {
+                    console.log('MetaMask network changed to:', chainId);
+                    // You might want to reload the page or show a message to the user
+                    // if your dApp is sensitive to network changes.
+                    // For this simple demo, we'll just log it.
+                });
+            }
+
+            // MetaMask connection logic
+            connectMetaMaskBtn.addEventListener('click', async () => {
+                console.log('Connect MetaMask button clicked.');
+                if (typeof window.ethereum !== 'undefined') { 
+                    try {
+                        const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
+                        if (accounts.length > 0) {
+                            const account = accounts[0];
+                            updateUserId(account);
+                            connectMetaMaskBtn.textContent = '🦊 MetaMask Connected';
+                            connectMetaMaskBtn.disabled = true;
+                            console.log(`MetaMask connected! Your ID is now: ${account}`);
+                        } else {
+                            console.log('No MetaMask accounts found or selected.');
+                        }
+                    } catch (error) {
+                        console.error('MetaMask connection error:', error);
+                        if (error.code === 4001) { // User rejected request
+                            console.log('MetaMask connection rejected by user.');
+                        } else {
+                            console.error(`Could not connect to MetaMask: ${error.message || 'Unknown error'}.`);
+                        }
+                    }
+                } else {
+                    // This case should be handled by the initial check and button text change
+                    console.log('MetaMask is not installed. The button should prompt for installation.');
+                }
+            });
+        });
+    </script>
+</body>
+</html>
