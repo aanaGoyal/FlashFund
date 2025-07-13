@@ -36,7 +36,6 @@ FlashFund is built with a powerful and modern set of technologies:
 * **Python Flask:** The robust micro-framework providing the backend logic.
 * **MetaMask:** Simulated integration to showcase decentralized identity.
 * **Tailwind CSS:** For rapid UI development and a beautiful, responsive design.
-* **PythonAnywhere:** (Assumed deployment platform, if applicable) for easy hosting and accessibility.
 
 ---
 
